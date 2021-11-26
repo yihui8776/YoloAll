@@ -15,7 +15,7 @@ import ssl
 import matplotlib.pyplot as plt
 from models.detr import DETR
 from torchvision.ops.boxes import batched_nms
-from common_utils import vis
+from common_utils import vis,visual
 
 model = None
 device = 'cpu'
@@ -26,6 +26,22 @@ nms_thres=0.5
 mean=[0.,0.,0.] # rbr
 std=[255., 255., 255.] #bgr
 
+LABEL = (
+    'N/A', 'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus',
+    'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'N/A',
+    'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse',
+    'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'N/A', 'backpack',
+    'umbrella', 'N/A', 'N/A', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis',
+    'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',
+    'skateboard', 'surfboard', 'tennis racket', 'bottle', 'N/A', 'wine glass',
+    'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich',
+    'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake',
+    'chair', 'couch', 'potted plant', 'bed', 'N/A', 'dining table', 'N/A',
+    'N/A', 'toilet', 'N/A', 'tv', 'laptop', 'mouse', 'remote', 'keyboard',
+    'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'N/A',
+    'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier',
+    'toothbrush'
+)
 
 # 图像数据处理
 transform = T.Compose([
@@ -64,7 +80,7 @@ def get_support_models():
 
 
 
-def create_model(model_name='detr-checkpoint0159', dev='cpu'):
+def create_model(model_name='detr-r50-e632da11', dev='cpu'):
     global model
     global device
     model = None
@@ -141,7 +157,8 @@ def inference(img):
         usescores = np.array(scores,dtype = float)
         useboxes = np.array(boxes,dtype = int)
 
-        vis_res = vis(img, useboxes, usescores, clss, conf=conf_thres)
+        #vis_res = vis(img, useboxes, usescores, clss, conf=conf_thres)
+        vis_res = visual(img, useboxes, usescores, clss, conf=conf_thres, class_names=LABEL)
         map_result['result'] = vis_res
 
     return map_result
